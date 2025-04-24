@@ -1,5 +1,12 @@
 import json
 from flask import Flask, render_template, request, redirect, flash, url_for
+from datetime import datetime
+
+
+def is_past_competition(competition_date):
+    comp_date = datetime.strptime(competition_date, "%Y-%m-%d %H:%M:%S")
+    current_date = datetime.now()
+    return comp_date < current_date
 
 
 def load_clubs():
@@ -29,7 +36,8 @@ def index():
 @app.route('/showSummary', methods=['POST'])
 def show_summary():
     club = [club for club in clubs if club['email'] == request.form['email']][0]
-    return render_template('welcome.html', club=club, competitions=competitions)
+    return render_template('welcome.html', club=club, competitions=competitions,
+                           is_past_competition=is_past_competition)
 
 
 @app.route('/book/<competition>/<club>')
@@ -37,7 +45,11 @@ def book(competition, club):
     found_club = [c for c in clubs if c['name'] == club][0]
     found_competition = [c for c in competitions if c['name'] == competition][0]
     if found_club and found_competition:
-        return render_template('booking.html', club=found_club, competition=found_competition)
+        if is_past_competition(found_competition['date']):
+            flash("Cannot book places for past competitions")
+            return render_template('welcome.html', club=club, competitions=competitions)
+        else:
+            return render_template('booking.html', club=found_club, competition=found_competition)
     else:
         flash("Something went wrong-please try again")
         return render_template('welcome.html', club=club, competitions=competitions)
@@ -47,6 +59,12 @@ def book(competition, club):
 def purchase_places():
     competition = [c for c in competitions if c['name'] == request.form['competition']][0]
     club = [c for c in clubs if c['name'] == request.form['club']][0]
+
+    if is_past_competition(competition['date']):
+        flash("Cannot book places for past competitions")
+        return render_template('welcome.html', club=club, competitions=competitions,
+                               is_past_competition=is_past_competition)
+
     places_required = int(request.form['places'])
     competition['numberOfPlaces'] = int(competition['numberOfPlaces']) - places_required
     flash('Great-booking complete!')
