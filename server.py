@@ -39,6 +39,9 @@ def show_summary():
     if not club:
         flash("Sorry, that email wasn't found.")
         return render_template('index.html')
+    else:
+        session['club_email'] = request.form['email']
+
     return render_template('welcome.html', club=club[0], competitions=competitions,
                            is_past_competition=is_past_competition_func)
 
@@ -104,7 +107,8 @@ def points():
 def dashboard():
     if 'club_email' in session:
         club = [club for club in clubs if club['email'] == session['club_email']][0]
-        return render_template('welcome.html', club=club, competitions=competitions)
+        return render_template('welcome.html', club=club, competitions=competitions,
+                               is_past_competition=is_past_competition_func)
     else:
         flash("Please log in first")
         return redirect(url_for('index'))
