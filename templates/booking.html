@@ -22,7 +22,7 @@
         <input type="hidden" name="competition" value="{{competition['name']}}">
         <label for="places">How many places?</label>
         <input type="number" name="places" id="places" min="1"
-               max="{{ club['points'] if club['points'] > 12 else 12 }}" required/>
+               max="{{ club['points']|int if club['points']|int > 12 else 12 }}" required/>
         <button type="submit">Book</button>
     </form>
 </body>
