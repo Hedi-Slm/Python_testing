@@ -1,5 +1,5 @@
 import json
-from flask import Flask, render_template, request, redirect, flash, url_for
+from flask import Flask, render_template, request, redirect, flash, url_for, session
 from datetime import datetime
 
 
@@ -95,7 +95,22 @@ def purchase_places():
 
 # TODO: Add route for points display
 
+@app.route('/points')
+def points():
+    return render_template('points.html', clubs=clubs)
+
+
+@app.route('/dashboard')
+def dashboard():
+    if 'club_email' in session:
+        club = [club for club in clubs if club['email'] == session['club_email']][0]
+        return render_template('welcome.html', club=club, competitions=competitions)
+    else:
+        flash("Please log in first")
+        return redirect(url_for('index'))
+
 
 @app.route('/logout')
 def logout():
+    session.clear()
     return redirect(url_for('index'))
