@@ -3,12 +3,6 @@ from flask import Flask, render_template, request, redirect, flash, url_for, ses
 from datetime import datetime
 
 
-def is_past_competition_func(competition_date):
-    comp_date = datetime.strptime(competition_date, "%Y-%m-%d %H:%M:%S")
-    current_date = datetime.now()
-    return comp_date < current_date
-
-
 def load_clubs():
     with open('clubs.json') as c:
         list_of_clubs = json.load(c)['clubs']
@@ -28,6 +22,12 @@ competitions = load_competitions()
 clubs = load_clubs()
 
 
+def is_past_competition_func(competition_date):
+    comp_date = datetime.strptime(competition_date, "%Y-%m-%d %H:%M:%S")
+    current_date = datetime.now()
+    return comp_date < current_date
+
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -44,7 +44,6 @@ def show_summary():
 
     return render_template('welcome.html', club=club[0], competitions=competitions,
                            is_past_competition=is_past_competition_func)
-
 
 
 @app.route('/book/<competition>/<club>')
