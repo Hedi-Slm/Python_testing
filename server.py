@@ -25,7 +25,7 @@ clubs = load_clubs()
 def is_past_competition_func(competition_date):
     comp_date = datetime.strptime(competition_date, "%Y-%m-%d %H:%M:%S")
     current_date = datetime.now()
-    return comp_date < current_date
+    return comp_date <= current_date
 
 
 @app.route('/')
