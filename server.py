@@ -61,35 +61,36 @@ def book(competition, club):
         return render_template('welcome.html', club=club, competitions=competitions)
 
 
+def can_book_places(club, competition, places_requested):
+    if is_past_competition_func(competition['date']):
+        return False, "Cannot book places for past competitions"
+    if places_requested < 1 or places_requested > 12:
+        return False, "Must book between 1 and 12 places"
+    if places_requested > int(competition['numberOfPlaces']):
+        return False, "Not enough places available"
+    if places_requested > int(club['points']):
+        return False, "Not enough points"
+    return True, "Booking allowed"
+
+
+def deduct_places(club, competition, places):
+    competition['numberOfPlaces'] = str(int(competition['numberOfPlaces']) - places)
+    club['points'] = str(int(club['points']) - places)
+
+
 @app.route('/purchasePlaces', methods=['POST'])
 def purchase_places():
     competition = [c for c in competitions if c['name'] == request.form['competition']][0]
     club = [c for c in clubs if c['name'] == request.form['club']][0]
-    club_points = int(club['points'])
-
-    if is_past_competition_func(competition['date']):
-        flash("Cannot book places for past competitions")
-        return render_template('welcome.html', club=club, competitions=competitions,
-                               is_past_competition=is_past_competition_func)
-
     places_required = int(request.form['places'])
-    competition_places = int(competition['numberOfPlaces'])
 
-    if places_required > competition_places:
-        flash('Not enough places-please try again')
-        return render_template('booking.html', club=club, competition=competition,
-                               is_past_competition=is_past_competition_func)
+    valid, message = can_book_places(club, competition, places_required)
 
-    if 12 < places_required < 1:
-        flash('Cannot book less than 1 or more than 12 places')
-        return render_template('booking.html', club=club, competition=competition,
-                               is_past_competition=is_past_competition_func)
-    if places_required > club_points:
-        flash('Not enough points-please try again')
-        return render_template('booking.html', club=club, competition=competition,
-                               is_past_competition=is_past_competition_func)
-    competition['numberOfPlaces'] = competition_places - places_required
-    club['points'] = club_points - places_required
+    if not valid:
+        flash(message)
+        return render_template('booking.html', club=club, competition=competition)
+
+    deduct_places(club, competition, places_required)
     flash('Great-booking complete!')
     return render_template('welcome.html', club=club, competitions=competitions,
                            is_past_competition=is_past_competition_func)
