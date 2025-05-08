@@ -48,8 +48,8 @@ def show_summary():
 
 @app.route('/book/<competition>/<club>')
 def book(competition, club):
-    found_club = [c for c in clubs if c['name'] == club][0]
-    found_competition = [c for c in competitions if c['name'] == competition][0]
+    found_club = next((c for c in clubs if c['name'] == club), None)
+    found_competition = next((c for c in competitions if c['name'] == competition), None)
     if found_club and found_competition:
         if is_past_competition_func(found_competition['date']):
             flash("Cannot book places for past competitions")
