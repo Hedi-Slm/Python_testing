@@ -112,7 +112,6 @@ def dashboard():
         return render_template('welcome.html', club=club, competitions=competitions,
                                is_past_competition=is_past_competition_func)
     else:
-        flash("Please log in first")
         return redirect(url_for('index'))
 
 
