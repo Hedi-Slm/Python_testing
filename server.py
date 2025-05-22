@@ -48,17 +48,19 @@ def show_summary():
 
 @app.route('/book/<competition>/<club>')
 def book(competition, club):
-    found_club = [c for c in clubs if c['name'] == club][0]
-    found_competition = [c for c in competitions if c['name'] == competition][0]
+    found_club = next((c for c in clubs if c['name'] == club), None)
+    found_competition = next((c for c in competitions if c['name'] == competition), None)
     if found_club and found_competition:
         if is_past_competition_func(found_competition['date']):
             flash("Cannot book places for past competitions")
-            return render_template('welcome.html', club=club, competitions=competitions)
+            return render_template('welcome.html', club=club, competitions=competitions,
+                                   is_past_competition=is_past_competition_func)
         else:
             return render_template('booking.html', club=found_club, competition=found_competition)
     else:
         flash("Something went wrong-please try again")
-        return render_template('welcome.html', club=club, competitions=competitions)
+        return render_template('welcome.html', club=club, competitions=competitions,
+                               is_past_competition=is_past_competition_func)
 
 
 def can_book_places(club, competition, places_requested):
@@ -91,7 +93,7 @@ def purchase_places():
         return render_template('booking.html', club=club, competition=competition)
 
     deduct_places(club, competition, places_required)
-    flash('Great-booking complete!')
+    flash('Great, booking complete!')
     return render_template('welcome.html', club=club, competitions=competitions,
                            is_past_competition=is_past_competition_func)
 
@@ -110,7 +112,6 @@ def dashboard():
         return render_template('welcome.html', club=club, competitions=competitions,
                                is_past_competition=is_past_competition_func)
     else:
-        flash("Please log in first")
         return redirect(url_for('index'))
 
 

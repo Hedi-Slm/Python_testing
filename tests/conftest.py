@@ -35,9 +35,9 @@ def test_competitions():
     ]
 
 
-@pytest.fixture
-def mock_data(test_clubs, test_competitions):
-    """Patch the global clubs and competitions variables directly"""
-    with patch('server.clubs', test_clubs), \
-         patch('server.competitions', test_competitions):
+@pytest.fixture(autouse=True)
+def _mock_data(test_clubs, test_competitions):
+    """Automatically patch clubs and competitions in all tests"""
+    with patch('server.clubs', [club.copy() for club in test_clubs]), \
+         patch('server.competitions', [comp.copy() for comp in test_competitions]):
         yield
