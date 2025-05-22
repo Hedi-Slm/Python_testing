@@ -18,6 +18,7 @@ def browser():
 
 
 def test_user_booking_flow(browser):
+
     # 1. Go to home page
     browser.get("http://localhost:5000/")
 
@@ -48,6 +49,8 @@ def test_user_booking_flow(browser):
 
     submit_button = browser.find_element(By.XPATH, "//button[@type='submit']")
     submit_button.click()
+
+    browser.implicitly_wait(1)  # Wait to allow elements load
 
     # 7. After purchase, verify redirected and values updated
     updated_body_text = browser.find_element(By.TAG_NAME, "body").text
