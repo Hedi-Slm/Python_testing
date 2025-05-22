@@ -91,6 +91,12 @@ def test_dashboard_with_login(client):
     assert b"Welcome, john@simplylift.co" in response.data
 
 
+def test_dashboard_without_login_follows_redirect(client):
+    response = client.get("/dashboard", follow_redirects=True)
+    assert response.status_code == 200
+    assert b"GUDLFT Registration Portal" in response.data # Check if redirected correctly to index
+
+
 def test_logout(client):
     with client.session_transaction() as sess:
         sess['club_email'] = "john@simplylift.co"
