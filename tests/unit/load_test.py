@@ -35,6 +35,7 @@ def test_load_competitions():
 
         assert isinstance(competitions, list)
         assert len(competitions) == 2
-        assert competitions[0] == {"name": "Spring Festival", "date": "2026-03-27 10:00:00", "numberOfPlaces": "25"}
+        assert competitions[0] == {"name": "Spring Festival", "date": "2026-03-27 10:00:00",
+                                   "numberOfPlaces": "25"}
         assert competitions[0]["name"] == "Spring Festival"
         assert competitions[1]["numberOfPlaces"] == "13"

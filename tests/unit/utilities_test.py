@@ -1,5 +1,5 @@
 import pytest
-from datetime import datetime, timedelta
+from datetime import datetime
 from server import is_past_competition_func
 from unittest.mock import patch
 
@@ -32,4 +32,3 @@ class TestIsPastCompetition:
         """Test that an invalid date format raises an exception"""
         with pytest.raises(ValueError):
             is_past_competition_func("invalid-date-format")
-
