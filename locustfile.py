@@ -1,6 +1,6 @@
 from locust import HttpUser, task, between
 
-# === Shared test data from your Pytest ===
+
 CLUB_NAME = "Simply Lift"
 CLUB_EMAIL = "john@simplylift.co"
 FUTURE_COMPETITION = "Spring Festival"
